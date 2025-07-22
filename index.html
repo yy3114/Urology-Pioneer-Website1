@@ -97,7 +97,8 @@
         .pioneer-avatar {
             width: 100%; /* 圖片佔滿圓圈寬度 */
             height: 100%; /* 圖片佔滿圓圈高度 */
-            object-fit: cover; /* 裁剪圖片以填充容器，保持比例 */
+            object-fit: cover; /* 裁剪圖片以填充容器，確保無空白 */
+            object-position: top; /* 嘗試將圖片頂部（通常是臉部）置於中心 */
             border-radius: 50%; /* 圓形圖片 */
             display: block; /* 移除圖片底部多餘空間 */
         }
@@ -170,6 +171,7 @@
         .modal-content {
             background-color: #fff; /* 白色背景 */
             padding: 2rem; /* 內邊距 */
+            padding-right: 160px; /* 為右側的頭像和關閉按鈕預留更多空間 */
             border-radius: 1rem; /* 圓角 */
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* 陰影 */
             max-width: 90%; /* 最大寬度 */
@@ -194,13 +196,35 @@
             cursor: pointer; /* 鼠標懸停時顯示手型 */
             color: #6b7280; /* 灰色文字 */
             transition: color 0.2s ease; /* 過渡動畫 */
+            z-index: 11; /* 確保在頭像上方 */
         }
         /* 模態框關閉按鈕懸停效果 */
         .modal-close-button:hover {
             color: #ef4444; /* 懸停時變為紅色 */
         }
 
-        /* 泌尿科簡介區塊樣式 - 每個子內容的容器 */
+        /* 模態框內的頭像容器 */
+        .modal-avatar-container {
+            position: absolute;
+            top: 1rem;
+            right: 4rem; /* 調整位置，避免與關閉按鈕重疊 */
+            width: 80px; /* 頭像大小 */
+            height: 80px; /* 頭像大小 */
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #047857; /* 綠色邊框 */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 10; /* 確保在內容上方 */
+        }
+
+        .modal-avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 確保填滿圓形框 */
+            object-position: top; /* 嘗試顯示臉部 */
+        }
+
+        /* 泌尿科簡介區塊 - 每個子內容的容器 */
         .collapsible-section {
             max-width: 800px; /* 最大寬度 */
             margin: 1rem auto; /* 上下邊距，左右居中 */
@@ -247,7 +271,7 @@
 
         /* 每個子內容的容器樣式 */
         .collapsible-content {
-            padding: 0 2rem; /* 內邊距 */
+            padding: 0 2rem; /* 初始內邊距為0 */
             max-height: 0; /* 初始隱藏狀態 */
             opacity: 0; /* 初始透明度 */
             overflow: hidden; /* 隱藏超出內容 */
@@ -329,6 +353,10 @@
     <!-- 模態框（彈出視窗），初始隱藏 -->
     <div id="pioneerModal" class="modal-overlay">
         <div class="modal-content">
+            <!-- 模態框內的頭像容器 -->
+            <div class="modal-avatar-container">
+                <img id="modalPioneerAvatar" src="" alt="先驅頭像" onerror="this.onerror=null; this.src='https://placehold.co/80x80/cccccc/333333?text=無圖片';">
+            </div>
             <!-- 先驅姓名 (中文與英文) -->
             <h2 id="modalPioneerName" class="text-2xl font-bold text-green-700 mb-2"></h2>
             <p id="modalPioneerEnglishName" class="text-xl text-gray-700 mb-4"></p>
@@ -489,7 +517,7 @@
                 name: "費利克斯·蓋永",
                 englishName: "Félix Guyon",
                 era: "1831-1920",
-                description: "法國外科醫生，被廣泛認為是現代泌尿學的奠基人之一。他在巴黎建立了世界上第一個專門的泌尿科診所，並對泌尿道感染、膀胱腫瘤和前列腺疾病的診斷與手術治療做出了開創性貢獻。他強調泌尿系統的整體性，並推動了泌尿學作為獨立學科的發展。",
+                description: "法國外科醫生，被廣泛認為是現代泌泌尿學的奠基人之一。他在巴黎建立了世界上第一個專門的泌尿科診所，並對泌尿道感染、膀胱腫瘤和前列腺疾病的診斷與手術治療做出了開創性貢獻。他強調泌尿系統的整體性，並推動了泌尿學作為獨立學科的發展。",
                 id: "guyon",
                 imageUrl: "https://i.postimg.cc/hGBy7DLC/felix-guyon-french-urologist.jpg" // 更新為提供的圖片
             },
@@ -518,7 +546,7 @@
                 imageUrl: "https://i.postimg.cc/k46PTMHx/ecd644c0cb620adddecdcbbcb91e0de7-400x400.jpg" // 更新為提供的圖片
             },
             {
-                name: "愛德溫·赫裡·芬威克",
+                name: "愛德溫·赫裡·芬<br>威克", /* 調整名字換行 */
                 englishName: "Edwin Hurry Fenwick",
                 era: "1856-1944",
                 description: "英國泌尿科醫生，以其在膀胱鏡檢查和泌尿外科手術方面的開創性工作而聞名。他改進了膀胱鏡技術，並對泌尿道結核病和膀胱腫瘤的診斷與治療做出了重要貢獻。",
@@ -526,7 +554,7 @@
                 imageUrl: "https://i.postimg.cc/13sg2bsg/Hurry-Fenwick.jpg" // 更新為提供的圖片
             },
             {
-                name: "帕特里克·C·沃爾什",
+                name: "帕特里克·C·沃<br>爾什", /* 調整名字換行 */
                 englishName: "Patrick C. Walsh",
                 era: "1935-至今",
                 description: "美國泌尿科醫生，被譽為現代前列腺癌手術的革新者。他在1982年開創並推廣了「保留神經的根治性前列腺切除術」，這項技術極大地減少了術後勃起功能障礙和尿失禁的發生率，徹底改變了前列腺癌的治療範式，顯著提升了患者術後的生活質量。",
@@ -543,6 +571,7 @@
         const modalPioneerEnglishName = document.getElementById('modalPioneerEnglishName'); // 英文名顯示元素
         const modalPioneerEra = document.getElementById('modalPioneerEra');
         const modalPioneerDescription = document.getElementById('modalPioneerDescription');
+        const modalPioneerAvatar = document.getElementById('modalPioneerAvatar'); // 新增：獲取模態框內的頭像元素
 
         /**
          * 根據主容器的大小，計算並定位所有先驅圓圈。
@@ -603,10 +632,23 @@
                 // 為每個先驅圓圈添加點擊事件監聽器
                 pioneerCircle.addEventListener('click', () => {
                     // 更新模態框的內容
-                    modalPioneerName.textContent = pioneer.name;
+                    modalPioneerName.innerHTML = pioneer.name; // 使用 innerHTML 以便解析 <br>
                     modalPioneerEnglishName.textContent = pioneer.englishName; // 設置英文名
                     modalPioneerEra.textContent = pioneer.era;
                     modalPioneerDescription.textContent = pioneer.description;
+                    // 新增：設置模態框內的頭像
+                    modalPioneerAvatar.src = pioneer.imageUrl;
+                    modalPioneerAvatar.alt = pioneer.name;
+
+                    // 根據先驅ID調整 modalPioneerAvatar 的 object-position
+                    modalPioneerAvatar.style.objectPosition = 'top'; // 預設為 top
+                    // 這裡不需要額外的 class，直接在 js 中設置 style.objectPosition
+                    if (pioneer.id === 'fenwick') {
+                        modalPioneerAvatar.style.objectPosition = '60% 30%'; /* 調整 Fenwick 的圖片位置 */
+                    } else if (pioneer.id === 'walsh') {
+                        modalPioneerAvatar.style.objectPosition = '70% 30%'; /* 調整 Walsh 的圖片位置 */
+                    }
+
                     // 顯示模態框
                     pioneerModal.classList.add('show');
                 });
@@ -632,8 +674,25 @@
         document.querySelectorAll('.collapsible-button').forEach(button => {
             button.addEventListener('click', () => {
                 const content = button.nextElementSibling; // 獲取按鈕後面的內容區塊
-                button.classList.toggle('active'); // 切換按鈕的 active 狀態，用於箭頭旋轉
-                content.classList.toggle('show-content'); // 切換內容區塊的顯示狀態
+                const isCurrentlyOpen = content.classList.contains('show-content');
+
+                // 遍歷所有可折疊內容，如果打開則關閉
+                document.querySelectorAll('.collapsible-content').forEach(otherContent => {
+                    if (otherContent !== content && otherContent.classList.contains('show-content')) {
+                        otherContent.classList.remove('show-content');
+                        otherContent.previousElementSibling.classList.remove('active'); // 移除對應按鈕的active狀態
+                    }
+                });
+
+                // 如果當前點擊的不是已經打開的，則打開它
+                if (!isCurrentlyOpen) {
+                    content.classList.add('show-content');
+                    button.classList.add('active');
+                } else {
+                    // 如果是已經打開的，則關閉它
+                    content.classList.remove('show-content');
+                    button.classList.remove('active');
+                }
             });
         });
 
