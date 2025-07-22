@@ -170,8 +170,7 @@
         /* 模態框內容樣式 */
         .modal-content {
             background-color: #fff; /* 白色背景 */
-            padding: 2rem; /* 內邊距 */
-            padding-right: 160px; /* 為右側的頭像和關閉按鈕預留更多空間 */
+            padding: 2rem; /* 統一內邊距 */
             border-radius: 1rem; /* 圓角 */
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* 陰影 */
             max-width: 90%; /* 最大寬度 */
@@ -205,16 +204,16 @@
 
         /* 模態框內的頭像容器 */
         .modal-avatar-container {
-            position: absolute;
-            top: 1rem;
-            right: 4rem; /* 調整位置，避免與關閉按鈕重疊 */
+            float: right; /* 浮動到右側 */
+            margin-left: 1.5rem; /* 左側間距，讓文字環繞 */
+            margin-bottom: 1rem; /* 底部間距 */
             width: 80px; /* 頭像大小 */
             height: 80px; /* 頭像大小 */
             border-radius: 50%;
             overflow: hidden;
             border: 2px solid #047857; /* 綠色邊框 */
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            z-index: 10; /* 確保在內容上方 */
+            /* 移除 position: absolute 和 top/right，讓它參與文檔流 */
         }
 
         .modal-avatar-container img {
